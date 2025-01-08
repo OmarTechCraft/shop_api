@@ -19,11 +19,23 @@ const AddShop = () => {
     e.preventDefault();
     setLoading(true);
     try {
-      await axios.post("https://front-end-task.koyeb.app/api/Shop", shopData);
-      setSuccessMessage("Shop added successfully!");
+      await axios.post("https://front-end-task.koyeb.app/api/Shop", {
+        title: shopData.title,
+        description: shopData.description,
+      });
+
+      if (shopData.categoryId) {
+        await axios.post("https://front-end-task.koyeb.app/api/ShopCategory", {
+          title: "Default Category",
+          parentCategoryId: 0,
+          shopId: shopData.categoryId,
+        });
+      }
+
+      setSuccessMessage("Shop and category added successfully!");
       setShopData({ title: "", description: "", categoryId: "" });
     } catch (error) {
-      alert("Failed to add shop.");
+      alert("Failed to add shop or category.");
     } finally {
       setLoading(false);
     }
@@ -75,7 +87,7 @@ const AddShop = () => {
               className="block text-gray-700 text-sm font-bold mb-2"
               htmlFor="categoryId"
             >
-              Category ID
+              Default Category Shop ID (Optional)
             </label>
             <input
               type="number"
@@ -83,7 +95,6 @@ const AddShop = () => {
               name="categoryId"
               value={shopData.categoryId}
               onChange={handleChange}
-              required
               className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700"
             />
           </div>
